@@ -1,7 +1,4 @@
-import Navigation from "@/components/Navigation";
-import CheckInStatusDialog from "@/components/CheckInStatusDialog";
 import { Toaster } from "sonner";
-import ProfileMenu from "@/components/ProfileMenu";
 import Navbar from "@/components/Navbar";
 
 export default function WithNavbarLayout({
