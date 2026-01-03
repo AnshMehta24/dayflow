@@ -23,7 +23,6 @@ export default function TimeOffPage() {
     CURRENT_ROLE === "EMPLOYEE" ? mockMyLeaveRequests : mockAllLeaveRequests
   );
 
-  // Filter leave requests by search query (HR only)
   const filteredLeaveRequests = useMemo(() => {
     if (CURRENT_ROLE === "EMPLOYEE") {
       return leaveRequests;
@@ -63,26 +62,22 @@ export default function TimeOffPage() {
     );
   };
 
-  // Employee View
   if (CURRENT_ROLE === "EMPLOYEE") {
     return (
-        <div className="space-y-6">
-          <h1 className="text-2xl font-bold">Time Off</h1>
+        <div className="space-y-4 sm:space-y-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Time Off</h1>
 
-          {/* Summary Cards */}
           <LeaveSummary summary={mockLeaveSummary} />
 
-          {/* New Time Off Button */}
           <div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="rounded border border-neutral-600 bg-neutral-600 px-6 py-2 text-neutral-200 hover:bg-neutral-500"
+              className="w-full sm:w-auto rounded border border-gray-900 bg-gray-900 px-4 sm:px-6 py-2 text-sm sm:text-base text-white hover:bg-gray-800"
             >
               NEW
             </button>
           </div>
 
-          {/* Leave Requests Table */}
           <LeaveTable records={filteredLeaveRequests} />
 
           {/* Modal */}
@@ -96,23 +91,19 @@ export default function TimeOffPage() {
     );
   }
 
-  // HR View
   return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Time Off</h1>
+      <div className="space-y-4 sm:space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Time Off</h1>
 
         <LeavesTabs>
           {(activeTab) => {
             if (activeTab === "requests") {
               return (
                 <>
-                  {/* Summary Cards */}
                   <LeaveSummary summary={mockLeaveSummary} />
 
-                  {/* Search Bar */}
                   <SearchBar value={searchQuery} onChange={setSearchQuery} />
 
-                  {/* Leave Requests Table with Actions */}
                   <LeaveTable
                     records={filteredLeaveRequests}
                     showEmployeeName={true}
@@ -123,9 +114,8 @@ export default function TimeOffPage() {
                 </>
               );
             } else {
-              // Allocation Tab (Placeholder)
               return (
-                <div className="rounded border border-neutral-700 bg-neutral-800 p-8 text-center text-neutral-400">
+                <div className="rounded border border-gray-300 bg-white p-8 text-center text-gray-600">
                   Leave allocation management coming soon
                 </div>
               );

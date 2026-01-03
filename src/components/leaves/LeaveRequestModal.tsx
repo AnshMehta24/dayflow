@@ -53,29 +53,29 @@ export default function LeaveRequestModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-2xl rounded border border-neutral-700 bg-neutral-800 p-6">
-        <h2 className="mb-6 text-2xl font-bold text-neutral-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="w-full max-w-2xl rounded border border-gray-300 bg-white p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-gray-900">
           New Time Off Request
         </h2>
 
         <div className="space-y-4">
           {/* Employee Name (read-only) */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-200">
+            <label className="mb-2 block text-sm font-medium text-gray-600">
               Employee
             </label>
             <input
               type="text"
               value={currentUserName}
               readOnly
-              className="w-full rounded border border-neutral-700 bg-neutral-700 px-4 py-2 text-neutral-400"
+              className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
             />
           </div>
 
           {/* Time Off Type */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-200">
+            <label className="mb-2 block text-sm font-medium text-gray-600">
               Time Off Type
             </label>
             <select
@@ -85,7 +85,7 @@ export default function LeaveRequestModal({
                   e.target.value as "Paid Time Off" | "Sick Leave" | "Unpaid Leave"
                 )
               }
-              className="w-full rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
+              className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:border-gray-900"
             >
               <option value="Paid Time Off">Paid Time Off</option>
               <option value="Sick Leave">Sick Leave</option>
@@ -94,47 +94,47 @@ export default function LeaveRequestModal({
           </div>
 
           {/* Validity Period */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-neutral-200">
+              <label className="mb-2 block text-sm font-medium text-gray-600">
                 Start Date
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
+                className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:border-gray-900"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-neutral-200">
+              <label className="mb-2 block text-sm font-medium text-gray-600">
                 End Date
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
+                className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:outline-none focus:border-gray-900"
               />
             </div>
           </div>
 
           {/* Allocation */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-200">
+            <label className="mb-2 block text-sm font-medium text-gray-600">
               Allocation
             </label>
             <input
               type="text"
               value={`${allocation} days`}
               readOnly
-              className="w-full rounded border border-neutral-700 bg-neutral-700 px-4 py-2 text-neutral-400"
+              className="w-full rounded border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
             />
           </div>
 
           {/* Attachment */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-neutral-200">
+            <label className="mb-2 block text-sm font-medium text-gray-600">
               Attachment {leaveType === "Sick Leave" && "(Required)"}
             </label>
             <input
@@ -142,22 +142,22 @@ export default function LeaveRequestModal({
               value={attachment}
               onChange={(e) => setAttachment(e.target.value)}
               placeholder="File name (mock upload)"
-              className="w-full rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200 placeholder:text-neutral-500"
+              className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-gray-900"
             />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="mt-6 flex justify-end gap-4">
+        <div className="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
           <button
             onClick={handleDiscard}
-            className="rounded border border-neutral-700 bg-neutral-800 px-6 py-2 text-neutral-200 hover:bg-neutral-700"
+            className="w-full sm:w-auto rounded border border-gray-300 bg-white px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-gray-900"
           >
             Discard
           </button>
           <button
             onClick={handleSubmit}
-            className="rounded border border-neutral-600 bg-neutral-600 px-6 py-2 text-neutral-200 hover:bg-neutral-500"
+            className="w-full sm:w-auto rounded border border-gray-900 bg-gray-900 px-4 sm:px-6 py-2 text-sm sm:text-base text-white hover:bg-gray-800"
           >
             Submit
           </button>

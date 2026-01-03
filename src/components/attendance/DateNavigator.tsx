@@ -22,25 +22,27 @@ export default function DateNavigator({
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <button
-        onClick={handlePrev}
-        className="rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200 hover:bg-neutral-700"
-      >
-        ← Prev
-      </button>
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+      <div className="flex gap-2 sm:gap-4">
+        <button
+          onClick={handlePrev}
+          className="flex-1 sm:flex-none rounded border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-gray-900"
+        >
+          ← Prev
+        </button>
+        <button
+          onClick={handleNext}
+          className="flex-1 sm:flex-none rounded border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 hover:bg-gray-50 focus:outline-none focus:border-gray-900"
+        >
+          Next →
+        </button>
+      </div>
       <input
         type="date"
         value={currentDate}
         onChange={(e) => onDateChange(e.target.value)}
-        className="rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
+        className="rounded border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm sm:text-base text-gray-900 focus:outline-none focus:border-gray-900"
       />
-      <button
-        onClick={handleNext}
-        className="rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200 hover:bg-neutral-700"
-      >
-        Next →
-      </button>
     </div>
   );
 }

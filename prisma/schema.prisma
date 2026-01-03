@@ -18,6 +18,8 @@ model Company {
   updatedAt   DateTime @updatedAt
 
   users       User[]
+  attendances Attendance[]
+  attendanceEntries AttendanceEntry[]
 }
 
 enum Role {
@@ -39,5 +41,70 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  attendances Attendance[]
+  attendanceEntries AttendanceEntry[]
+
   @@map("users")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LEAVE
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  date        DateTime @db.Date 
+  
+  status      AttendanceStatus @default(PRESENT)
+  totalHours  Float?   @default(0) 
+  
+  notes       String?  @db.Text 
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  entries     AttendanceEntry[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, date]) 
+  @@index([userId, date])
+  @@index([companyId, date])
+  @@index([status])
+  @@map("attendances")
+}
+
+model AttendanceEntry {
+  id          String   @id @default(cuid())
+  
+  checkIn     DateTime 
+  checkOut    DateTime?
+  
+  duration    Float?   
+  location    String?  
+  notes       String?  
+  
+  attendanceId String
+  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([attendanceId])
+  @@index([userId, checkIn])
+  @@index([companyId, checkIn])
+  @@map("attendance_entries")
 }

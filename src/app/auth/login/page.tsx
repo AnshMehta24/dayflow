@@ -49,20 +49,20 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden flex">
+    <div className="min-h-screen overflow-y-auto flex flex-col lg:flex-row">
       {/* LEFT PANEL */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gray-900 text-white p-8 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 bg-gray-900 text-white p-6 lg:p-8 flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-12">
             <Building2 className="w-8 h-8" />
             <span className="text-xl font-semibold">DailyFlow</span>
           </div>
 
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-2xl lg:text-4xl font-bold mb-4">
             Daily HR management — simple, organized, and stress-free
           </h1>
 
-          <p className="text-gray-400 mb-12">
+          <p className="text-gray-400 mb-8 lg:mb-12 text-sm lg:text-base">
             Track attendance, manage teams, and handle approvals faster —
             everything in one dashboard built for HR teams.
           </p>
@@ -116,9 +116,9 @@ export default function SignInPage() {
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <div className="w-full max-w-md py-4">
-          <h1 className="text-2xl font-bold mb-6 text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">
             Welcome back 👋
           </h1>
 
