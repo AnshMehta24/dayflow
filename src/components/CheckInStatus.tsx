@@ -43,12 +43,9 @@ export default function CheckInStatus() {
       className="flex items-center gap-3"
       aria-label={getStatusLabel()}
     >
-      {/* Status Indicator */}
       {getStatusIcon()}
-      
-      {/* Profile Icon */}
+
       <div className="h-8 w-8 rounded-full bg-neutral-700"></div>
     </button>
   );
 }
-
