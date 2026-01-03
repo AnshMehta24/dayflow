@@ -20,6 +20,8 @@ model Company {
   users       User[]
   attendances Attendance[]
   attendanceEntries AttendanceEntry[]
+  leaveRequests LeaveRequest[]
+  leaveLedgers LeaveLedger[]
 }
 
 enum Role {
@@ -57,6 +59,8 @@ model User {
 
   attendances Attendance[]
   attendanceEntries AttendanceEntry[]
+  leaveRequests LeaveRequest[]
+  leaveLedgers LeaveLedger[]
 
   @@map("users")
 }
@@ -121,6 +125,73 @@ model AttendanceEntry {
   @@index([userId, checkIn])
   @@index([companyId, checkIn])
   @@map("attendance_entries")
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+  EXTRA
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model LeaveRequest {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyId     String
+  company       Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  leaveType     LeaveType
+  startDate     DateTime    @db.Date
+  endDate       DateTime    @db.Date
+  remarks       String?     @db.Text
+  status        LeaveStatus @default(PENDING)
+  adminComment  String?     @db.Text
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([startDate])
+  @@index([companyId, status])
+  @@map("leave_requests")
+}
+
+enum LeaveLedgerReason {
+  ACCRUAL
+  LEAVE_APPROVED
+  MANUAL_ADJUSTMENT
+}
+
+model LeaveLedger {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  leaveType   LeaveType
+  change      Int     
+  reason      LeaveLedgerReason
+  referenceId String? 
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, leaveType])
+  @@index([companyId])
+  @@index([userId])
+  @@index([referenceId])
+  @@map("leave_ledgers")
 }
 
 model SalaryInfo {
