@@ -24,6 +24,9 @@ export default async function EmployeesServerPage() {
   const employees = await prisma.user.findMany({
     where: {
       companyId: company.id,
+      NOT: {
+        id: session.user.id,
+      },
     },
     select: {
       id: true,
