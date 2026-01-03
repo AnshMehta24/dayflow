@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import * as z from "zod";
 import { prisma } from "@/lib/prisma";
+import { uploadToCloudinary } from "@/lib/uploadToCloud";
 
 const signUpSchema = z
   .object({
@@ -62,6 +63,20 @@ export async function POST(request: NextRequest) {
 
     const validatedData = signUpSchema.parse(body);
 
+    let logoUrl: string;
+    if (validatedData.companyLogo) {
+      try {
+        logoUrl = await uploadToCloudinary(validatedData.companyLogo);
+        console.log(logoUrl);
+      } catch (err) {
+        console.error("Cloudinary upload error:", err);
+        return NextResponse.json(
+          { error: "Failed to upload company logo" },
+          { status: 400 }
+        );
+      }
+    }
+
     const existingCompany = await prisma.company.findUnique({
       where: { email: validatedData.email },
     });
@@ -91,7 +106,7 @@ export async function POST(request: NextRequest) {
         data: {
           name: validatedData.companyName,
           email: validatedData.email,
-          companyLogo: validatedData.companyLogo || " ",
+          companyLogo: logoUrl || " ",
           phone: validatedData.phone,
         },
       });
@@ -119,6 +134,7 @@ export async function POST(request: NextRequest) {
           name: validatedData.name,
           role: "HR",
           companyId: company.id,
+          loginId: loginId,
         },
       });
 

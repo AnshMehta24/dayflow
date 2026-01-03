@@ -7,16 +7,27 @@ const handler = NextAuth({
   providers: [
     CredentialsProvider({
       credentials: {
-        email: {},
+        identifier: {},
         password: {},
       },
+
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
+        if (!credentials?.identifier || !credentials.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        console.log(credentials, "CRED");
+        let user;
 
+        if (credentials.identifier.includes("@")) {
+          user = await prisma.user.findUnique({
+            where: { email: credentials.identifier },
+          });
+        } else {
+          user = await prisma.user.findFirst({
+            where: { loginId: credentials.identifier },
+          });
+        }
+
+        console.log(user);
         if (!user) return null;
 
         const valid = await bcrypt.compare(credentials.password, user.password);
@@ -29,6 +40,7 @@ const handler = NextAuth({
           name: user.name,
           role: user.role,
           companyId: user.companyId,
+          loginId: user.loginId,
         };
       },
     }),
@@ -44,15 +56,17 @@ const handler = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.companyId = user.companyId;
+        token.loginId = user.loginId;
       }
       return token;
     },
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.companyId = token.companyId as string;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.companyId = token.companyId;
+        session.user.loginId = token.loginId;
       }
       return session;
     },

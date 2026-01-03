@@ -9,38 +9,15 @@ import {
   EyeOff,
   Upload,
   Building2,
-  Mail,
-  Phone,
-  Lock,
-  User,
-  CheckCircle,
+  Shield,
+  Users,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-
-const signUpSchema = z
-  .object({
-    companyName: z
-      .string()
-      .min(2, "Company name must be at least 2 characters"),
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().regex(/^\+?[1-9]\d{9,14}$/, "Invalid phone number"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
-    confirmPassword: z.string(),
-    companyLogo: z.string().min(1, "Company logo is required").optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+import { signUpSchema } from "@/utils/zodSchema";
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
@@ -98,14 +75,14 @@ export default function SignUpPage() {
 
       if (response.ok) {
         await signIn("credentials", {
-          email: data.email,
+          identifier: data.email,
           password: data.password,
           redirect: true,
           callbackUrl: "/dashboard",
         });
       }
 
-      router.push("/signin");
+      router.push("/dashboard");
     } catch (error) {
       alert(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -114,274 +91,269 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-purple-500 to-blue-600 rounded-2xl mb-4 shadow-lg">
-            <Building2 className="w-8 h-8 text-white" />
+    <div className="h-screen overflow-hidden flex">
+      <div className="hidden lg:flex lg:w-1/2 bg-gray-900 text-white p-8 flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-12">
+            <Building2 className="w-8 h-8" />
+            <span className="text-xl font-semibold">DailyFlow</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Create Your Account
+
+          <h1 className="text-4xl font-bold mb-4">
+            Daily HR management — simple, organized, and stress-free
           </h1>
-          <p className="text-gray-600">
-            Join us today and start managing your company efficiently
+
+          <p className="text-gray-400 mb-12">
+            From onboarding to attendance, payroll, performance reviews, and
+            approvals — everything your HR team needs in one clean dashboard.
+            Spend less time on admin and more time supporting your people.
           </p>
-        </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="pb-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-purple-600" />
-                Company Information
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name *
-                  </label>
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        {...register("companyName")}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                        placeholder="Enter your company name"
-                      />
-                    </div>
-                    <label className="cursor-pointer group">
-                      <div className="flex items-center justify-center w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg transition-all shadow-md hover:shadow-lg">
-                        <Upload className="w-5 h-5" />
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                  {logoPreview && (
-                    <div className="mt-3 flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <Image
-                        height={48}
-                        width={48}
-                        src={logoPreview}
-                        alt="Logo preview"
-                        className="h-12 w-12 object-cover rounded-lg shadow-sm"
-                      />
-                      <div className="flex items-center gap-2 text-green-700">
-                        <CheckCircle className="w-4 h-4" />
-                        <span className="text-sm font-medium">
-                          Logo uploaded successfully
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  {errors.companyName && (
-                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                      <span className="text-xs">⚠</span>{" "}
-                      {errors.companyName.message}
-                    </p>
-                  )}
-                  {errors.companyLogo && (
-                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                      <span className="text-xs">⚠</span>{" "}
-                      {errors.companyLogo.message}
-                    </p>
-                  )}
+          <div className="space-y-6">
+            <div className="flex gap-4">
+              <div className="shrink-0">
+                <div className="w-10 h-10 bg-white bg-opacity-10 rounded-lg flex items-center justify-center">
+                  <Shield className="w-5 h-5" color="black" />
                 </div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1 text-sm">
+                  Secure employee records
+                </h3>
+                <p className="text-gray-400 text-xs">
+                  Store documents, contracts, and sensitive data safely — with
+                  permissions and role-based access control.
+                </p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-purple-600" />
-                Personal Information
-              </h2>
-
+            <div className="flex gap-4">
+              <div className="shrink-0">
+                <div className="w-10 h-10 bg-white bg-opacity-10 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5" color="black" />
+                </div>
+              </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                <h3 className="font-semibold mb-1 text-sm">
+                  Smooth daily workflows
+                </h3>
+                <p className="text-gray-400 text-xs">
+                  Handle attendance, leave requests, onboarding, and approvals —
+                  all in one place, fully tracked and auditable.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="shrink-0">
+                <div className="w-10 h-10 bg-white bg-opacity-10 rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5" color="black" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1 text-sm">
+                  Faster decision making
+                </h3>
+                <p className="text-gray-400 text-xs">
+                  Real-time insights help HR and managers take action quickly on
+                  staffing, performance, and compliance tasks.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-gray-400 text-xs">
+          © 2026 YourCompany. All rights reserved.
+        </div>
+      </div>
+
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 overflow-y-auto">
+        <div className="w-full max-w-md py-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Company Name
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  {...register("companyName")}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                  placeholder="Enter company name"
+                />
+                <label className="cursor-pointer">
+                  <div className="flex items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-800 text-white rounded-md">
+                    <Upload className="w-4 h-4" />
                   </div>
                   <input
-                    type="text"
-                    {...register("name")}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="John Doe"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
                   />
-                </div>
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                    <span className="text-xs">⚠</span> {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="email"
-                    {...register("email")}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="john@example.com"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                    <span className="text-xs">⚠</span> {errors.email.message}
-                  </p>
-                )}
               </div>
+              {logoPreview && (
+                <div className="mt-2 flex items-center gap-2">
+                  <Image
+                    height={32}
+                    width={32}
+                    src={logoPreview}
+                    alt="Logo preview"
+                    className="h-8 w-8 object-cover rounded"
+                  />
+                  <span className="text-xs text-gray-500">Logo uploaded</span>
+                </div>
+              )}
+              {errors.companyName && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.companyName.message}
+                </p>
+              )}
+              {errors.companyLogo && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.companyLogo.message}
+                </p>
+              )}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="tel"
-                    {...register("phone")}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="+1234567890"
-                  />
-                </div>
-                {errors.phone && (
-                  <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                    <span className="text-xs">⚠</span> {errors.phone.message}
-                  </p>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                {...register("name")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                placeholder="John Doe"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                    <span className="text-xs">⚠</span> {errors.password.message}
-                  </p>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                {...register("email")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                placeholder="john@example.com"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    {...register("confirmPassword")}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                    <span className="text-xs">⚠</span>{" "}
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                {...register("phone")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                placeholder="+1234567890"
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.phone.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  {...register("confirmPassword")}
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 text-sm"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2.5 rounded-md font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Creating Account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-center text-gray-600">
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-600">
               Already have an account?{" "}
               <Link
-                href="/signin"
-                className="text-purple-600 hover:text-purple-700 font-semibold hover:underline transition-colors"
+                href="/auth/login"
+                className="text-gray-900 hover:underline font-medium"
               >
                 Sign In
               </Link>
             </p>
           </div>
-        </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          By signing up, you agree to our Terms of Service and Privacy Policy
-        </p>
+          <p className="text-center text-xs text-gray-400 mt-4">
+            By signing up, you agree to our Terms of Service and Privacy Policy
+          </p>
+        </div>
       </div>
     </div>
   );
