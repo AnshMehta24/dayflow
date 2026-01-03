@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { Circle } from "lucide-react";
-import { checkIn, checkOut, getCurrentCheckInStatus } from "@/app/(with navbar)/attendence/action";
+import {
+  checkIn,
+  checkOut,
+  getCurrentCheckInStatus,
+} from "@/app/(with navbar)/attendence/action";
 import { toast } from "sonner";
 
 interface CheckInStatus {
@@ -14,7 +18,9 @@ interface CheckInStatus {
 
 export default function CheckInStatusDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [checkInStatus, setCheckInStatus] = useState<CheckInStatus | null>(null);
+  const [checkInStatus, setCheckInStatus] = useState<CheckInStatus | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -96,9 +102,6 @@ export default function CheckInStatusDialog() {
           }`}
           fill="currentColor"
         />
-        
-        {/* Profile Icon */}
-        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-gray-300"></div>
       </button>
 
       {/* Dialog with Backdrop Blur */}
@@ -109,7 +112,7 @@ export default function CheckInStatusDialog() {
         >
           {/* Backdrop with blur */}
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
-          
+
           {/* Dialog Content */}
           <div
             className="relative bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-md mx-4"
@@ -118,7 +121,7 @@ export default function CheckInStatusDialog() {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
               {isCheckedIn ? "Check Out" : "Check In"}
             </h2>
-            
+
             <p className="text-gray-600 mb-6">
               {isCheckedIn
                 ? "Are you sure you want to check out?"
@@ -133,7 +136,7 @@ export default function CheckInStatusDialog() {
               >
                 Cancel
               </button>
-              
+
               <button
                 onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
                 disabled={isProcessing}
@@ -161,4 +164,3 @@ export default function CheckInStatusDialog() {
     </>
   );
 }
-

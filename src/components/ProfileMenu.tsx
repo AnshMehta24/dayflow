@@ -40,8 +40,8 @@ export default function ProfileMenu() {
           </div>
 
           <Link
-            href="/profile"
-            className="block px-3 py-2 text-sm hover:bg-neutral-800"
+            href={`/profile/${user?.id}`}
+            className="block px-3 py-2 text-sm text-white"
             onClick={() => setOpen(false)}
           >
             View Profile
@@ -49,7 +49,7 @@ export default function ProfileMenu() {
 
           <button
             onClick={() => signOut({ callbackUrl: "/auth/login" })}
-            className="block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-neutral-800"
+            className="block w-full text-left px-3 py-3 cursor-pointer text-sm text-red-400 hover:bg-neutral-800"
           >
             Logout
           </button>

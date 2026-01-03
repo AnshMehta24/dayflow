@@ -1,20 +1,20 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-const authOptions: NextAuthOptions= {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
+      name: "Credentials",
       credentials: {
-        identifier: {},
-        password: {},
+        identifier: { label: "Email or Login ID" },
+        password: { label: "Password", type: "password" },
       },
 
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials.password) return null;
 
-        console.log(credentials, "CRED");
         let user;
 
         if (credentials.identifier.includes("@")) {
@@ -34,7 +34,6 @@ const authOptions: NextAuthOptions= {
         });
 
         const valid = await bcrypt.compare(credentials.password, user.password);
-
         if (!valid) return null;
 
         return {
@@ -44,7 +43,7 @@ const authOptions: NextAuthOptions= {
           role: user.role,
           companyId: user.companyId,
           loginId: user.loginId,
-          companyLogo: company?.companyLogo,
+          companyLogo: company?.companyLogo ?? null,
         };
       },
     }),
@@ -68,11 +67,11 @@ const authOptions: NextAuthOptions= {
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.companyId = token.companyId;
-        session.user.loginId = token.loginId;
-        session.user.companyLogo = token.companyLogo;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.companyId = token.companyId as string;
+        session.user.loginId = token.loginId as string | null;
+        session.user.companyLogo = token.companyLogo as string;
       }
       return session;
     },
@@ -84,4 +83,3 @@ const authOptions: NextAuthOptions= {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-export { authOptions }; 
