@@ -40,12 +40,13 @@ export default function CheckInStatus() {
   return (
     <button
       onClick={cycleStatus}
-      className="flex items-center gap-3"
+      className="flex items-center gap-2 sm:gap-3"
       aria-label={getStatusLabel()}
     >
       {getStatusIcon()}
-
-      <div className="h-8 w-8 rounded-full bg-neutral-700"></div>
+      
+      {/* Profile Icon */}
+      <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-gray-300"></div>
     </button>
   );
 }

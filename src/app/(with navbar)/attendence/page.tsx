@@ -1,127 +1,113 @@
-"use client";
-
-import { useState, useMemo } from "react";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 import {
-  CURRENT_ROLE,
-  mockMyAttendance,
-  mockEmployeeAttendance,
-} from "@/lib/mockAttendance";
-import AttendanceSummary from "@/components/attendance/AttendanceSummary";
-import AttendanceTable from "@/components/attendance/AttendanceTable";
-import AttendanceTabs from "@/components/attendance/AttendanceTabs";
-import DateNavigator from "@/components/attendance/DateNavigator";
-import SearchBar from "@/components/attendance/SearchBar";
+  getMyAttendance,
+  getAllEmployeesAttendance,
+  getAttendanceSummary,
+  getCurrentCheckInStatus,
+} from "./action";
+import EmployeeAttendanceView from "@/components/attendance/EmployeeAttendanceView";
+import HRAttendanceView from "@/components/attendance/HRAttendanceView";
 
-export default function AttendancePage() {
-  const [selectedMonth, setSelectedMonth] = useState("2024-01");
-  const [selectedDate, setSelectedDate] = useState("2024-01-01");
-  const [searchQuery, setSearchQuery] = useState("");
+export default async function AttendancePage() {
+  const session = await getServerSession(authOptions);
 
-  // Filter employee attendance by date and search query
-  const filteredEmployeeAttendance = useMemo(() => {
-    let filtered = mockEmployeeAttendance.filter(
-      (record) => record.date === selectedDate
-    );
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
 
-    if (searchQuery.trim()) {
-      filtered = filtered.filter((record) =>
-        record.employeeName?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const currentDate = now.toISOString().split("T")[0];
 
-    return filtered;
-  }, [selectedDate, searchQuery]);
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      companyId: true,
+    },
+  });
 
-  // Employee View
-  if (CURRENT_ROLE === "EMPLOYEE") {
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (user.role === "EMPLOYEE") {
+    const [attendanceResult, summaryResult, statusResult] = await Promise.all([
+      getMyAttendance(currentMonth),
+      getAttendanceSummary(user.id, currentMonth),
+      getCurrentCheckInStatus(),
+    ]);
+
+    const initialAttendances = attendanceResult.success
+      ? attendanceResult.data || []
+      : [];
+    const initialSummary = summaryResult.success
+      ? summaryResult.data ?? null
+      : null;
+    const initialCheckInStatus = statusResult.success
+      ? statusResult.data ?? null
+      : null;
+
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Attendance</h1>
-
-        {/* Month Selector */}
-        <div className="flex items-center gap-4">
-          <label htmlFor="month-select" className="text-neutral-200">
-            Month:
-          </label>
-          <select
-            id="month-select"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
-          >
-            <option value="2024-01">January 2024</option>
-            <option value="2024-02">February 2024</option>
-            <option value="2024-03">March 2024</option>
-          </select>
-        </div>
-
-        {/* Summary Cards */}
-        <AttendanceSummary records={mockMyAttendance} />
-
-        {/* Attendance Table */}
-        <AttendanceTable records={mockMyAttendance} />
-      </div>
+      <EmployeeAttendanceView
+        user={{
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        }}
+        initialAttendances={initialAttendances}
+        initialSummary={initialSummary}
+        initialCheckInStatus={initialCheckInStatus}
+        initialMonth={currentMonth}
+      />
     );
   }
 
-  // HR View
+ 
+  const [myAttendanceResult, mySummaryResult, myStatusResult] =
+    await Promise.all([
+      getMyAttendance(currentMonth),
+      getAttendanceSummary(user.id, currentMonth),
+      getCurrentCheckInStatus(),
+    ]);
+
+  const employeesAttendanceResult = await getAllEmployeesAttendance(currentDate);
+
+  const initialAttendances = myAttendanceResult.success
+    ? myAttendanceResult.data || []
+    : [];
+  const initialSummary = mySummaryResult.success
+    ? mySummaryResult.data ?? null
+    : null;
+  const initialCheckInStatus = myStatusResult.success
+    ? myStatusResult.data ?? null
+    : null;
+  const initialEmployeeAttendances = employeesAttendanceResult.success
+    ? employeesAttendanceResult.data || []
+    : [];
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Attendance</h1>
-
-      <AttendanceTabs>
-        {(activeTab) => {
-          if (activeTab === "my") {
-            // My Attendance Tab (same as Employee view)
-            return (
-              <>
-                {/* Month Selector */}
-                <div className="flex items-center gap-4">
-                  <label htmlFor="month-select" className="text-neutral-200">
-                    Month:
-                  </label>
-                  <select
-                    id="month-select"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="rounded border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200"
-                  >
-                    <option value="2024-01">January 2024</option>
-                    <option value="2024-02">February 2024</option>
-                    <option value="2024-03">March 2024</option>
-                  </select>
-                </div>
-
-                {/* Summary Cards */}
-                <AttendanceSummary records={mockMyAttendance} />
-
-                {/* Attendance Table */}
-                <AttendanceTable records={mockMyAttendance} />
-              </>
-            );
-          } else {
-            // Employee Attendance Tab
-            return (
-              <>
-                {/* Date Navigation and Search */}
-                <div className="space-y-4">
-                  <DateNavigator
-                    currentDate={selectedDate}
-                    onDateChange={setSelectedDate}
-                  />
-                  <SearchBar value={searchQuery} onChange={setSearchQuery} />
-                </div>
-
-                {/* Attendance Table with Employee Names */}
-                <AttendanceTable
-                  records={filteredEmployeeAttendance}
-                  showEmployeeName={true}
-                />
-              </>
-            );
-          }
-        }}
-      </AttendanceTabs>
-    </div>
+    <HRAttendanceView
+      user={{
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }}
+      initialAttendances={initialAttendances}
+      initialSummary={initialSummary}
+      initialCheckInStatus={initialCheckInStatus}
+      initialEmployeeAttendances={initialEmployeeAttendances}
+      initialMonth={currentMonth}
+      initialDate={currentDate}
+    />
   );
 }
+

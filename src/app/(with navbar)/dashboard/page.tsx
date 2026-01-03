@@ -19,10 +19,10 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
+      <div className="bg-white shadow-md rounded-lg p-6 sm:p-8 w-full max-w-md mx-4">
+        <h1 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900">Your Profile</h1>
 
-        <div className="space-y-3 text-gray-800">
+        <div className="space-y-3 text-gray-900">
           <p>
             <span className="font-semibold">Name:</span> {user?.name}
           </p>
