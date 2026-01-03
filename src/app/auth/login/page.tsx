@@ -45,7 +45,7 @@ export default function SignInPage() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/attendence");
   };
 
   return (
@@ -115,7 +115,6 @@ export default function SignInPage() {
         </p>
       </div>
 
-      {/* RIGHT PANEL */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <div className="w-full max-w-md py-4">
           <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">

@@ -11,6 +11,10 @@ export default async function EmployeesServerPage() {
     redirect("/login");
   }
 
+  if(session.user.role !== "HR"){
+    redirect("/attendence")
+  }
+
   const company = await prisma.company.findUnique({
     where: {
       id: session.user.companyId,
