@@ -26,7 +26,6 @@ enum Role {
   HR
   EMPLOYEE
 }
-
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -34,9 +33,24 @@ model User {
   name      String
   loginId   String?  @unique
   role      Role     @default(EMPLOYEE)
+  
+  mobile    String?
+  department String?
+  manager   String?
+  location  String?
+  profileImage String?
+  
+  about     String?
+  jobLove   String?
+  interests String?
 
   companyId String
   company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  salaryInfo SalaryInfo?
+  
+  skills    Skill[]
+  certifications Certification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -107,4 +121,62 @@ model AttendanceEntry {
   @@index([userId, checkIn])
   @@index([companyId, checkIn])
   @@map("attendance_entries")
+}
+
+model SalaryInfo {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  monthlyWage    Decimal  @default(0)
+  yearlyWage     Decimal  @default(0)
+  workingDaysPerWeek Int?
+  breakTimeHours     Decimal?
+  
+  basicSalary         Decimal  @default(0)
+  basicSalaryPercent  Decimal  @default(0)
+  
+  houseRentAllowance  Decimal  @default(0)
+  hraPercent          Decimal  @default(0)
+  
+  standardAllowance   Decimal  @default(0)
+  standardPercent     Decimal  @default(0)
+  
+  performanceBonus    Decimal  @default(0)
+  performancePercent  Decimal  @default(0)
+  
+  leaveTravelAllowance Decimal @default(0)
+  ltaPercent          Decimal  @default(0)
+  
+  fixedAllowance      Decimal  @default(0)
+  fixedPercent        Decimal  @default(0)
+  
+  employeePF          Decimal  @default(0)
+  employeePFPercent   Decimal  @default(0)
+  
+  employerPF          Decimal  @default(0)
+  employerPFPercent   Decimal  @default(0)
+  
+  professionalTax     Decimal  @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+}
+
+model Certification {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
 }

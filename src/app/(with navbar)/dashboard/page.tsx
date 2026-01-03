@@ -1,41 +1,63 @@
-"use client";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import EmployeesPage from "@/components/EmployeePage";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-import { useSession } from "next-auth/react";
+export default async function EmployeesServerPage() {
+  const session = await getServerSession(authOptions);
 
-export default function ProfilePage() {
-  const { data: session, status } = useSession();
-
-  console.log(session, "Session");
-
-  if (status === "loading") {
-    return <p className="p-6">Loading…</p>;
+  if (!session?.user) {
+    redirect("/login");
   }
 
-  if (!session) {
-    return <p className="p-6">You are not logged in.</p>;
+  const company = await prisma.company.findUnique({
+    where: {
+      id: session.user.companyId,
+    },
+  });
+
+  if (!company) {
+    redirect("/login");
   }
 
-  const user = session.user as any;
+  const employees = await prisma.user.findMany({
+    where: {
+      companyId: company.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      loginId: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const formattedEmployees = employees.map((emp) => ({
+    ...emp,
+    createdAt: emp.createdAt.toISOString(),
+  }));
+
+  const formattedCompany = {
+    id: company.id,
+    name: company.name,
+    companyLogo: company.companyLogo,
+  };
+
+  const user = {
+    role: session.user.role,
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white shadow-md rounded-lg p-6 sm:p-8 w-full max-w-md mx-4">
-        <h1 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900">Your Profile</h1>
-
-        <div className="space-y-3 text-gray-900">
-          <p>
-            <span className="font-semibold">Name:</span> {user?.name}
-          </p>
-
-          <p>
-            <span className="font-semibold">Email:</span> {user?.email}
-          </p>
-
-          <p>
-            <span className="font-semibold">Role:</span> {user?.role}
-          </p>
-        </div>
-      </div>
-    </div>
+    <EmployeesPage
+      employees={formattedEmployees}
+      company={formattedCompany}
+      user={user}
+    />
   );
 }
