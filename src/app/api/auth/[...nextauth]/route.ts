@@ -27,8 +27,11 @@ const handler = NextAuth({
           });
         }
 
-        console.log(user);
         if (!user) return null;
+
+        const company = await prisma.company.findFirst({
+          where: { id: user.companyId },
+        });
 
         const valid = await bcrypt.compare(credentials.password, user.password);
 
@@ -41,6 +44,7 @@ const handler = NextAuth({
           role: user.role,
           companyId: user.companyId,
           loginId: user.loginId,
+          companyLogo: company?.companyLogo,
         };
       },
     }),
@@ -57,6 +61,7 @@ const handler = NextAuth({
         token.role = user.role;
         token.companyId = user.companyId;
         token.loginId = user.loginId;
+        token.companyLogo = user.companyLogo;
       }
       return token;
     },
@@ -67,6 +72,7 @@ const handler = NextAuth({
         session.user.role = token.role;
         session.user.companyId = token.companyId;
         session.user.loginId = token.loginId;
+        session.user.companyLogo = token.companyLogo;
       }
       return session;
     },

@@ -4,6 +4,7 @@ import "../globals.css";
 import { Providers } from "../Provider";
 import Navigation from "@/components/Navigation";
 import CheckInStatus from "@/components/CheckInStatus";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,23 +31,11 @@ export default function WithNavbarLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          <div className="min-h-screen bg-neutral-900 text-neutral-200">
-            <nav className="border-b border-neutral-700 bg-neutral-800 px-6 py-4">
-              <div className="flex items-center justify-between">
-                {/* Company Logo */}
-                <div className="text-xl font-semibold">Company Logo</div>
+        <div className="min-h-screen bg-neutral-900 text-neutral-200">
+          <Navbar />
 
-                {/* Navigation Tabs */}
-                <Navigation />
-
-                <CheckInStatus />
-              </div>
-            </nav>
-
-            <main className="container mx-auto px-6 py-8">{children}</main>
-          </div>
-        </Providers>
+          <main className="container mx-auto px-6 py-8">{children}</main>
+        </div>
       </body>
     </html>
   );
