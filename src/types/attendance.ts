@@ -6,12 +6,12 @@ export type AttendanceStatus =
 
 export interface AttendanceRecord {
   id: string;
-  employeeName?: string; // Only for HR view
+  employeeName?: string;
   date: string;
   checkIn: string | null;
   checkOut: string | null;
-  workHours: number; // Hours for this specific entry
-  totalHours: number; // Total hours for the day (same for all entries on the same day)
+  workHours: number; 
+  totalHours: number;
 }
 
 export interface AttendanceSummary {

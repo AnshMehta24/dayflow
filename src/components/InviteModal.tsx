@@ -99,8 +99,8 @@ export function InviteModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-300">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
@@ -108,7 +108,7 @@ export function InviteModal({
             </h2>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -124,28 +124,28 @@ export function InviteModal({
             >
               {result.success ? (
                 <div>
-                  <h3 className="font-semibold text-green-800 mb-3">
+                  <h3 className="font-semibold text-green-700 mb-3">
                     Employee Invited Successfully!
                   </h3>
                   <div className="space-y-2 text-sm">
-                    <div className="bg-white p-3 rounded border border-green-200">
+                    <div className="bg-white p-3 rounded border border-gray-300">
                       <p className="text-gray-600 mb-1">Login ID:</p>
                       <p className="font-mono font-semibold text-gray-900">
                         {result.loginId}
                       </p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-green-200">
+                    <div className="bg-white p-3 rounded border border-gray-300">
                       <p className="text-gray-600 mb-1">Email:</p>
                       <p className="font-mono font-semibold text-gray-900">
                         {result.email}
                       </p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-green-200">
+                    <div className="bg-white p-3 rounded border border-gray-300">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-gray-600">Temporary Password:</p>
                         <button
                           onClick={() => setShowPassword(!showPassword)}
-                          className="text-pink-600 hover:text-pink-700 transition-colors"
+                          className="text-gray-600 hover:text-gray-900 transition-colors"
                         >
                           {showPassword ? (
                             <EyeOff className="w-4 h-4" />
@@ -171,8 +171,8 @@ export function InviteModal({
                 </div>
               ) : (
                 <div>
-                  <h3 className="font-semibold text-red-800 mb-2">Error</h3>
-                  <p className="text-red-700 text-sm">{result.error}</p>
+                  <h3 className="font-semibold text-red-700 mb-2">Error</h3>
+                  <p className="text-red-600 text-sm">{result.error}</p>
                   <button
                     onClick={() => setResult(null)}
                     className="w-full mt-4 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
@@ -185,7 +185,7 @@ export function InviteModal({
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Full Name *
                 </label>
                 <div className="relative">
@@ -197,14 +197,14 @@ export function InviteModal({
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     placeholder="John Doe"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Email Address *
                 </label>
                 <div className="relative">
@@ -216,14 +216,14 @@ export function InviteModal({
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     placeholder="john@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Phone Number
                 </label>
                 <div className="relative">
@@ -234,13 +234,13 @@ export function InviteModal({
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setFormData({ ...formData, phone: e.target.value })
                     }
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     placeholder="+1234567890"
                   />
                 </div>
               </div>
 
-              <div className="bg-pink-50 border border-pink-200 rounded-lg p-3 text-sm text-pink-800">
+              <div className="bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-600">
                 A temporary password will be generated automatically and
                 displayed after invitation.
               </div>
@@ -248,7 +248,7 @@ export function InviteModal({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
+                className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
               >
                 {isLoading ? "Inviting..." : "Send Invitation"}
               </button>
